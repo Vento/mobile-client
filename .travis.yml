@@ -2,20 +2,48 @@ language: java
 jdk:
     - oraclejdk8
 
+android:
+  components:
+  - tools
+  - platform-tools
+  - build-tools-25.0.1
+  - android-23
+  - extra-android-m2repository
+  - extra-google-m2repository
+  - sys-img-x86-android-23
+  - extra
+
 node_js:
   - stable
 
+addons:
+  sonarcloud:
+    organization: "vvasiloud-github"
+    token:
+      secure: "RS5xraEiwU/m5gQZMJxj6QZsHSw2f8Ms4ybAw9Lqcka1ecr9H4EWkwuF09ka07Qq4hR2JFF2ymNUAaRkyGK4NovcaWq8R90NkaXuJ/FFPdliP5wMwMQmPQ6Rb9asohTDVv/RAiCWO7J2G8RQjGtPSws2rFffMaJ6I9nMfgB7BaPtxCbh6veLlse9lyd8sbhwVeQxu9ogCzWgP3IsacPvS9G20bHls4/J2sB9VwbMl5lopVlsGWtzPeAHcqkce+1U3B3g6wg4apn+o7apIxq6o/L+WhoX/SJ/9xOIyvn6bv1Q6QSqHzxfM4qlsQ1UPVFxK7IdRXcWdA/umyVtvcmcgJm45M/fzSwNM8cZvG9PHCrXGKdfmva6JK6QJAT5s+l6PnL6g2NcinwvuPHA2ouzezQUcPphgj3Fp4vXs7M8gpQK6J7Ufbl4Lcmg5d3yXK8Zzt1FzeVNBeZzYZRl5b5Lx900Jzm0drKcYrly1KFEAaOdXkbcuApIM+TsfRPXr1a+HnoZrNEPTKnDuazJQ8kJJwAJ+Q+4yScfWeTYhlwHK09MLaJ61zNmsUIEBgvnzYv7X/oBNDCcZ3f7WHaCaJrbGE2MSgcb6Mn0yWZgYto985i36PKSUIrfJ/HgWSo6J52C2hdsePL8f5dedICTdwW+QSYgrh4ATzP/j4Y7o8gTm0c="
+
 before_install:
-- npm install -g npm@latest
-- npm install -g cordova ionic@latest
+  - npm install -g npm@latest
+  - npm install -g cordova ionic@latest
 before_script:
+  - sonar-scanner
 
 script:
-- npm install
-- ionic platform add android
-- ionic build android
+  - npm install
+  - ionic platform add android
+  - ionic build android
+
 after_success:
+
+env:
+  global:
+    - ANDROID_TARGET=android-23
+    - ANDROID_ABI=x86
 
 cache:
   directories:
-    - "node_modules"
+    - 'node_modules'
+    - '$HOME/.sonar/cache'
+    - '$HOME/.gradle/caches/'
+    - '$HOME/.gradle/wrapper/'
+    - '$HOME/.android/build-cache'

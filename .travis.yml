@@ -25,8 +25,6 @@ addons:
 before_install:
   - npm install -g npm@latest
   - npm install -g cordova ionic@latest
-before_script:
-  - sonar-scanner
 
 script:
   - npm install

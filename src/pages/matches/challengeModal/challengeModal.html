@@ -1,7 +1,36 @@
-<div class="alert-md">
-  <div class="alert-wrapper">
-    <div class="alert-head">
-      <h2 class="alert-title" id="alert-hdr-2">Use this lightsaber?</h2></div>
-    <div class="alert-message" id="alert-msg-2">{{user}}</div>
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        Close
+      </button>
+    </ion-buttons>
+    <ion-title>Select a route</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div #pleaseConnect id="please-connect">
+    <p>Please connect to the Internet...</p>
   </div>
-</div>
+  <agm-map id="routeMap" [styles]="googleMapsProvider.mapStyle" [zoom]="16"
+           [minZoom]="googleMapsProvider.options.minZoom"
+           [maxZoom]="googleMapsProvider.options.maxZoom"
+           [latitude]="googleMapsProvider.options.center.lat"
+           [longitude]="googleMapsProvider.options.center.lng"
+           [usePanning]="true"
+           (mapReady)='loadAPIWrapper($event)'>
+    <agm-polyline [geodesic]="true" [editable]="true" [draggable]="true" [strokeWeight]="3" [strokeColor]="FFFFFF" [strokeOpacity]="1.0">
+      <agm-polyline-point *ngFor="let p of paths; let i = index" [latitude]="p.lat" [longitude]="p.lng"
+      ></agm-polyline-point>
+    </agm-polyline>
+  </agm-map>
+  <div *ngIf="user && user.label" class="route-info"><span>{{user.label}}</span> <span *ngIf="this.paths.length">Distance:{{this.calculateKmDistance(this.paths)}} km</span></div>
+  <div *ngIf="request" class="route-info"><span>{{request.username}}</span>  <span *ngIf="request.route">Distance:{{this.calculateKmDistance(this.paths)}} km</span></div>
+
+
+  <ion-fab center bottom>
+    <button [disabled]="!this.paths.length" ion-fab color="orange" class="animated bounce" (click)="sendRequest()">
+      <ion-icon class="fi flaticon-man-running"></ion-icon>
+    </button>
+  </ion-fab>
+</ion-content>

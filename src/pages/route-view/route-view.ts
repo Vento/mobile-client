@@ -41,6 +41,8 @@ export class RouteViewPage {
     if (this.selectedRoute === undefined) {
       this.route = <IRoute> {}
       this.route.points = [];
+    } else {
+      this.paths = <any> this.selectedRoute.points;
     }
   }
 
@@ -64,7 +66,7 @@ export class RouteViewPage {
         ]
       },
       polylineOptions: {
-        strokeColor: '#FFFFFF',
+        strokeColor: '#000000',
         strokeWeight: 3
       }
     });
@@ -84,6 +86,7 @@ export class RouteViewPage {
 
     if (form.valid) {
       this.viewUtilities.presentLoading();
+      console.log(this.route)
       this.profileService.createRoute(this.route).subscribe(
         updatedData => {
           this.viewUtilities.presentToast("Route saved!");
@@ -123,7 +126,13 @@ export class RouteViewPage {
       let polyline: any = {};
       polyline.lat = data.snappedPoints[i].location.latitude;
       polyline.lng = data.snappedPoints[i].location.longitude;
+
       this.paths.push(polyline);
+
+      let point: any = {};
+      point.x = data.snappedPoints[i].location.latitude;
+      point.y = data.snappedPoints[i].location.longitude;
+      this.route.points.push(point);
     }
     this.mapElement.triggerResize().then(() => {
       let center = {lat:data.snappedPoints[data.snappedPoints.length -1].location.latitude, lng: data.snappedPoints[0].location.longitude};

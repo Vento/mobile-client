@@ -21,7 +21,7 @@
            (mapReady)='loadAPIWrapper($event)'>
     <agm-marker [latitude]="googleMapsProvider.options.center.lat"
                 [longitude]="googleMapsProvider.options.center.lng"
-                label="Me" (markerClick)="openDetail(m)">
+                [iconUrl]="'assets/img/me.png'">
     </agm-marker>
     <agm-circle [latitude]="googleMapsProvider.options.center.lat"
                 [longitude]="googleMapsProvider.options.center.lng"
@@ -30,25 +30,22 @@
     </agm-circle>
     <agm-marker *ngFor="let m of markers; let i = index" (markerClick)="openDetail(m)"
                 [latitude]="m.lat" [longitude]="m.lng" [label]="m.label" [iconUrl]="'assets/img/marker.png'">
-      <!--      <agm-info-window [disableAutoPan]="true" (infoWindowClose)="onCloseDetail.emit()">
-              <h5>{{m.label}}</h5>
-            </agm-info-window>-->
     </agm-marker>
   </agm-map>
-  <ion-fab [hidden]="!this.activeMarker" class="row infoWindow animated fadeInUp">
+  <ion-fab *ngIf="this.activeMarker" class="row infoWindow animated fadeInUp">
     <button ion-fab class="hidden">
     </button>
     <div class="avatar-container">
       <ion-avatar>
         <img class="avatar" src="http://www.gravatar.com/avatar?d=mm&amp;s=75">
-        <div text-center>Username</div>
+        <div text-center>{{this.activeMarker.label}}</div>
       </ion-avatar>
     </div>
     <div class="close" (click)="closeDetail()">
       <ion-icon name="ios-close"></ion-icon>
     </div>
 
-    <button (click)="showRouteSelectionPrompt()" ion-button class="challenge-btn">
+    <button (click)="showRouteSelectionPrompt(this.activeMarker)" ion-button class="challenge-btn">
       <ion-icon item-left role="img" class="fi flaticon-marathon"></ion-icon>
       Challenge player
     </button>

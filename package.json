@@ -10,7 +10,7 @@
         "test": "karma start karma.conf.js"
     },
     "dependencies": {
-        "@agm/core": "^1.0.0-beta.0",
+        "@agm/core": "1.0.0-beta.2",
         "@angular/common": "4.4.3",
         "@angular/compiler": "4.4.3",
         "@angular/compiler-cli": "4.4.3",
@@ -43,6 +43,7 @@
         "ionic-native": "2.4.1",
         "ionic-plugin-keyboard": "^2.2.1",
         "ionicons": "3.0.0",
+        "lodash": "^4.17.4",
         "moment": "^2.18.1",
         "ng-lottie": "^0.2.2",
         "ng2-translate": "^5.0.0",
@@ -56,6 +57,7 @@
         "@ionic/app-scripts": "3.0.0",
         "@ionic/cli-plugin-proxy": "1.3.0",
         "@types/google-maps": "^3.2.0",
+        "@types/lodash": "^4.14.90",
         "@types/moment": "^2.13.0",
         "@types/sockjs-client": "^1.0.30",
         "@types/stompjs": "^2.3.0",

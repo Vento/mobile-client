@@ -27,7 +27,6 @@ export class Matches {
 
   constructor(public navCtrl: NavController, private platform: Platform, public googleMapsProvider: GoogleMapsProvider,
               private _stompService: StompService, private profileStorage: ProfileStorage, private modalCtrl: ModalController) {
-    this.initWebsocket();
   }
 
   public loadAPIWrapper(map) {
@@ -42,6 +41,7 @@ export class Matches {
 
     this.profileStorage.getProfile().then((profile: IProfile) => {
       this.username = (profile) ? profile.name : undefined;
+      this.initWebsocket();
     })
   }
 
@@ -67,22 +67,25 @@ export class Matches {
     aroundMeSubscription.map((message: any) => {
       return message.body;
     }).subscribe((msg_body: string) => {
-      console.log(JSON.parse(msg_body), msg_body);
+      // console.log(JSON.parse(msg_body), msg_body);
       this.markers = [];
       JSON.parse(msg_body).forEach((location: IUserLocation) => {
-        let marker: any = {};
-        marker.lat = location.position.x;
-        marker.lng = location.position.y;
-        marker.label = location.username;
-        this.markers.push(marker);
+        if (location.username != this.username) {
+          let marker: any = {};
+          marker.lat = location.position.x;
+          marker.lng = location.position.y;
+          marker.label = location.username;
+          this.markers.push(marker);
+        }
       })
     });
 
-    let pushNotificationSubscription = this._stompService.subscribe(`/app/challenge/${this.username}`);
+    let pushNotificationSubscription = this._stompService.subscribe(`/topic/requests/${this.username}`);
     pushNotificationSubscription.map((message: any) => {
       return message.body;
-    }).subscribe((msg_body: string) => {
-      console.log(JSON.parse(msg_body), msg_body);
+    }).subscribe((requestDto: string) => {
+      console.log(JSON.parse(requestDto), requestDto);
+      this.routeRequestPopup(requestDto);
     });
 
     let errorSubscription = this._stompService.subscribe('/queue/errors');
@@ -105,15 +108,20 @@ export class Matches {
   }
 
   private openDetail(marker): void {
-    this.activeMarker = "test";
+    this.activeMarker = marker;
   }
 
   private closeDetail(): void {
     this.activeMarker = undefined;
   }
 
-  private showRouteSelectionPrompt(): void {
-    let routesModal = this.modalCtrl.create(ChallengeModal, {userId: 8675309});
+  private showRouteSelectionPrompt(marker): void {
+    let routesModal = this.modalCtrl.create(ChallengeModal, {user: marker});
+    routesModal.present();
+  }
+
+  private routeRequestPopup(requestDto): void {
+    let routesModal = this.modalCtrl.create(ChallengeModal, {request: requestDto});
     routesModal.present();
   }
 }

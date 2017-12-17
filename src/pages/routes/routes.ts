@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 
 import {NavController, NavParams} from 'ionic-angular';
-import {RouteViewPage} from '../../pages/route-view/route-view';
+import {RouteViewPage} from '../route-view/route-view';
 import {ProfileService} from '../../providers/profile/profile-service';
 import {ViewUtilities} from '../../providers/view-utilities/view-utilities';
 import {IRoute} from "./RouteModel";

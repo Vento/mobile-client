@@ -14,7 +14,7 @@ export class ApiBase {
   private authApi:string;
 
   constructor() {
-    this.apiBase = "http://snf-728774.vm.okeanos.grnet.gr/api";
+    this.apiBase = "http://snf-782536.vm.okeanos.grnet.gr/api";
     this.profileApi = this.apiBase + "/profiles";
     this.matchApi = this.apiBase + "/matches";
     this.authApi = this.apiBase + "/uaa";

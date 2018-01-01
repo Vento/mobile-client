@@ -64,7 +64,7 @@ export function createTranslateLoader(http: Http) {
 
 export const stompConfig: StompConfig = {
   url: () => {
-    return new SockJS('http://snf-728774.vm.okeanos.grnet.gr/api/matches/ws');
+    return new SockJS('http://snf-782536.vm.okeanos.grnet.gr/api/matches/ws');
   },
   headers: {
     login: '',

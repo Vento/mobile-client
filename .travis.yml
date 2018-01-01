@@ -28,8 +28,8 @@ before_install:
 
 script:
   - npm install
-  - ionic platform add android
-  - ionic build android
+  - ionic cordova platform add android
+  - ionic cordova build android --prod
 
 after_success:
 

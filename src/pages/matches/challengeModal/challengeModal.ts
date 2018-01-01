@@ -35,7 +35,6 @@ export class ChallengeModal {
 
     this.user = navParams.get('user');
     this.request = navParams.get('request');
-    console.log(this.request)
 
     if (this.user) {
       this.profileService.getProfile(this.user.label).subscribe((profile: IProfile) => {
@@ -50,13 +49,13 @@ export class ChallengeModal {
         this.currentUser = profile;
       });
     } else if (this.request) {
-      let points: any[] = [];
+/*      let points: any[] = [];
       this.request.route.points.forEach((point) => {
         point = this.renameKeyName(point, "x", "lat");
         point = this.renameKeyName(point, "y", "lng");
         points.push(point);
       });
-      this.paths = points
+      this.paths = points*/
     }
 
   }
@@ -104,7 +103,6 @@ export class ChallengeModal {
 
     this.http.get('https://roads.googleapis.com/v1/snapToRoads?path=' + pathValues.join('|') + '&interpolate=true&key=AIzaSyAc1FP_Vf1BCmuCqo47pM5HUcrA9kiVcrI')
       .subscribe((res => {
-        console.log(res.json())
         this.processSnapToRoadResponse(res.json());
       }));
   }
@@ -123,7 +121,7 @@ export class ChallengeModal {
         lat: data.snappedPoints[data.snappedPoints.length - 1].location.latitude,
         lng: data.snappedPoints[0].location.longitude
       };
-      this.map.setCenter(center)
+      this.map.setCenter(center);
       this.map.panTo(center);
       if (data.warningMessage) {
         this.viewUtilities.presentToast(data.warningMessage);

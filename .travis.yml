@@ -1,3 +1,4 @@
+sudo: required
 language: android
 
 android:
@@ -21,6 +22,11 @@ addons:
       secure: "o62XrKROtc6dbGZDO+gxR0mqCLDrgjlulu3LCxOANtv1DBjywjZVFk+oalwwzReXACwnFQ7qtZX64FPKMJfpumHCWAUAb0Menbj0e6d20c+n1/T/HeIqq00hFfQ0Z4I456yErjmHIsjfpCsqydBTibgA6AMMEZfJzfhMqJS3FmTdnT/Is6XASvQZF9aA9Di5mdsp8I53QWtedmKxVPEqkXuMpor3vORrzJU+23FXGTVYC07XK9mSy7L3HZc20BqPkeErAU4c08Ll5O+2yQWoka05h2kJsDIAbWsZJWthRKjQ8xizARxg8+BF6ddVkHkbkI664Z8HfsLVzdt3R6iaOHzjdYNnB0ZHTgEPMBdJevrRcLGPd61mijWtQFSrSduF1cE+IrVWb7wJtYzMJrd2cVPQGR+qHzvT6BZEB9SYFL1QrVoL2g0hlyDMvO4A9/hUPlpxZBdSQT0oCstciV5hi/PEAg4TF+3e8F6Hoban8Si8SAkqzgVDvafCVDw1O88+OP6jVKOuJNX157OVNmTioTz+B5bVKkS2kizjZEkyXMA4/mb4hnNg8s0qwaC/XODGG4Cbh4KctCUk1Hu+L5QM6Bcq6/BFjFNLGSuu3VV9mMxewjgEarDPV/lCB0tjVFWUu2IGqDkWlVRmfQTFwxjlOUgLlPnLnW7QIJhpVXt5e+M="
 
 before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install nodejs
+  - sudo apt-get install npm
+
+install:
   - npm install -g npm@latest
   - npm install -g cordova ionic@latest
 

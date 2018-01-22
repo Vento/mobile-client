@@ -6,6 +6,8 @@ import {ProfileService} from '../../providers/profile/profile-service';
 import {ProfileStorage} from '../../providers/profile/profile-storage';
 import {TranslationService} from '../../providers/translation/translation-service';
 import * as moment from 'moment';
+import {Stepcounter} from '@ionic-native/stepcounter';
+
 
 @Component({
   selector: 'page-dashboard',
@@ -13,9 +15,12 @@ import * as moment from 'moment';
 })
 export class Dashboard {
   dashboard: { name?: string, lastSeen?: string, routes?: any, records?: any } = {};
+  steps: number = 0;
 
   constructor(public navCtrl: NavController, public viewUtilities: ViewUtilities, private profileService: ProfileService,
-              private profileStorage: ProfileStorage, public translationService: TranslationService) {
+              private profileStorage: ProfileStorage, public translationService: TranslationService, private stepcounter: Stepcounter) {
+    this.subscribeSteps();
+    this.getSteps();
   }
 
 
@@ -53,4 +58,20 @@ export class Dashboard {
     let duration = moment.duration(now.diff(end));
     return duration.humanize();
   }
+
+  private subscribeSteps(): void {
+    let startingOffset = 0;
+    this.stepcounter.start(startingOffset).then(
+      onSuccess => console.log('stepcounter-start success', onSuccess),
+      onFailure => console.log('stepcounter-start error', onFailure));
+  }
+
+  private getSteps(): void {
+     this.stepcounter.getStepCount().then(
+      onSuccess => {
+        this.steps =  onSuccess;
+      }
+    );
+  }
+
 }

@@ -8,6 +8,7 @@ import {IPoint, IRoute} from "../routes/RouteModel";
 import {LatLngLiteral, GoogleMapsAPIWrapper, AgmMap} from '@agm/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
+import * as _ from "lodash";
 
 declare let google: any;
 
@@ -37,19 +38,28 @@ export class RouteViewPage {
               public platform: Platform,
               public googleMapsProvider: GoogleMapsProvider,
               private http: Http) {
-    this.selectedRoute = navParams.get('route');
-    if (this.selectedRoute === undefined) {
-      this.route = <IRoute> {}
-      this.route.points = [];
-    } else {
-      this.paths = <any> this.selectedRoute.points;
-    }
+    this.selectedRoute = navParams.get('route')
+    this.route = <IRoute> {}
+    this.route.points = [];
   }
 
   public ionViewDidLoad(): void {
 
     this.platform.ready().then(() => {
       this.googleMapsProvider.init(this.mapElement, this.pleaseConnect.nativeElement);
+      if (this.selectedRoute) {
+        this.route = this.selectedRoute;
+        this.selectedRoute.points.forEach((point) => {
+          point = this.renameKeyName(point, "x", "lat");
+          point = this.renameKeyName(point, "y", "lng");
+          this.paths.push(<any> point);
+        });
+        this.mapElement.triggerResize().then(() => {
+          let center = {lat:this.paths[this.paths.length -1].lat, lng: this.paths[0].lng};
+          this.map.setCenter(center);
+          this.map.panTo(center);
+        });
+      }
     });
 
   }
@@ -136,12 +146,22 @@ export class RouteViewPage {
     }
     this.mapElement.triggerResize().then(() => {
       let center = {lat:data.snappedPoints[data.snappedPoints.length -1].location.latitude, lng: data.snappedPoints[0].location.longitude};
-      this.map.setCenter(center)
+      this.map.setCenter(center);
       this.map.panTo(center);
       if(data.warningMessage) {
         this.viewUtilities.presentToast(data.warningMessage);
       }
     });
+  }
+
+  private renameKeyName(obj, oldName, newName) {
+    const clone = _.cloneDeep(obj);
+    const keyVal = clone[oldName];
+
+    delete clone[oldName];
+    clone[newName] = keyVal;
+
+    return clone;
   }
 
 }

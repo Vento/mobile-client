@@ -12,6 +12,8 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {Device} from '@ionic-native/device';
 import {Shake} from '@ionic-native/shake';
 import {Network} from '@ionic-native/network';
+import { Stepcounter } from '@ionic-native/stepcounter';
+
 
 import {Dashboard} from '../pages/dashboard/dashboard';
 import {History} from '../pages/history/history';
@@ -134,6 +136,7 @@ export const stompConfig: StompConfig = {
     Network,
     Device,
     Shake,
+    Stepcounter,
     ApiBase,
     AuthService,
     ProfileService,

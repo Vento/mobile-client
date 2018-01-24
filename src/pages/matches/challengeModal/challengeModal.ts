@@ -49,13 +49,13 @@ export class ChallengeModal {
         this.currentUser = profile;
       });
     } else if (this.request) {
-/*      let points: any[] = [];
+      let points: any[] = [];
       this.request.route.points.forEach((point) => {
         point = this.renameKeyName(point, "x", "lat");
         point = this.renameKeyName(point, "y", "lng");
         points.push(point);
       });
-      this.paths = points*/
+      this.paths = points
     }
 
   }
@@ -166,11 +166,12 @@ export class ChallengeModal {
       points.push(point);
     });
 
-    let requestDto: any = {
-      username: this.currentUser.name,
+    let routeDto: any = {
+      name: this.currentUser.name,
+      points: points
     };
     console.log(points);
-    this._stompService.publish(`/app/request/${this.user.label}`, JSON.stringify(requestDto));
+    this._stompService.publish(`/app/request/${this.user.label}`, JSON.stringify(routeDto));
   }
 
   private renameKeyName(obj, oldName, newName) {

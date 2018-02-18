@@ -9,6 +9,7 @@ import {IProfile} from "../../../models/ProfileModel";
 import {StompService} from "../../../providers/@stomp/ng2-stompjs/src/stomp.service";
 import {ProfileStorage} from "../../../providers/profile/profile-storage";
 import * as _ from "lodash";
+import {IUserLocation} from "../MatchesModel";
 
 @Component({
   selector: 'modal-challenge',
@@ -26,6 +27,9 @@ export class ChallengeModal {
   private user: any;
   private request: any;
   private currentUser: IProfile;
+  private isRequestSent: boolean = false;
+  private isRequestAccepted: boolean = false;
+  private markers: any = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public viewUtilities: ViewUtilities, public platform: Platform,
@@ -35,19 +39,19 @@ export class ChallengeModal {
 
     this.user = navParams.get('user');
     this.request = navParams.get('request');
+    this.profileStorage.getProfile().then((profile: IProfile) => {
+      this.currentUser = profile;
+    });
 
     if (this.user) {
       this.profileService.getProfile(this.user.label).subscribe((profile: IProfile) => {
           console.log(profile)
+          this.acceptSubscription();
         },
         err => {
           this.viewUtilities.onError(err);
         }
       );
-
-      this.profileStorage.getProfile().then((profile: IProfile) => {
-        this.currentUser = profile;
-      });
     } else if (this.request) {
       let points: any[] = [];
       this.request.route.points.forEach((point) => {
@@ -55,9 +59,12 @@ export class ChallengeModal {
         point = this.renameKeyName(point, "y", "lng");
         points.push(point);
       });
-      this.paths = points
-    }
+      this.paths = points;
 
+      if(this.request.route.accepted) {
+        this.handleAcceptConfirmation(this.request);
+      }
+    }
   }
 
 
@@ -170,8 +177,23 @@ export class ChallengeModal {
       name: this.currentUser.name,
       points: points
     };
-    console.log(points);
     this._stompService.publish(`/app/request/${this.user.label}`, JSON.stringify(routeDto));
+    this.isRequestSent = true;
+  }
+
+  private acceptRequest(): void {
+    let routeDto: any = {
+      name: this.currentUser.name,
+      points: this.request.route.points,
+      accepted: true
+    };
+
+    console.log(this.request.route.name);
+    this._stompService.publish(`/app/request/${this.request.route.name}`, JSON.stringify(routeDto));
+    this.aroundMeSubscription(this.request.route.name);
+    this.isRequestAccepted = true;
+    this.googleMapsProvider.map.setZoom(20);
+    this.googleMapsProvider.centerToMyLocation();
   }
 
   private renameKeyName(obj, oldName, newName) {
@@ -182,5 +204,46 @@ export class ChallengeModal {
     clone[newName] = keyVal;
 
     return clone;
+  }
+
+  private aroundMeSubscription(username) {
+    let aroundMeSubscription = this._stompService.subscribe(`/app/around/${username}`);
+    aroundMeSubscription.map((message: any) => {
+      return message.body;
+    }).subscribe((msg_body: string) => {
+      this.markers = [];
+      JSON.parse(msg_body).forEach((location: IUserLocation) => {
+        if (location.username === username){
+          let marker: any = {};
+          marker.lat = location.position.x;
+          marker.lng = location.position.y;
+          marker.label = location.username;
+          this.markers.push(marker);
+        }
+      })
+    });
+  }
+
+  private handleAcceptConfirmation(request) {
+    console.log("ACCEPTED", request);
+    this.googleMapsProvider.map.setZoom(20);
+    this.googleMapsProvider.centerToMyLocation();
+    this.isRequestAccepted = true;
+    this.isRequestSent = false;
+    console.log(this.isRequestSent);
+    this.aroundMeSubscription(request.route.name);
+  }
+
+  private acceptSubscription() {
+    let acceptSubscription = this._stompService.subscribe(`/topic/requests/${this.currentUser.name}`);
+    acceptSubscription.map((message: any) => {
+      return message.body;
+    }).subscribe((msg_body: string) => {
+      let response: any = JSON.parse(msg_body);
+      if(response.route.accepted) {
+        console.log("ACCEPTED");
+        this.handleAcceptConfirmation(response);
+      }
+      });
   }
 }

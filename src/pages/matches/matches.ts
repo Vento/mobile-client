@@ -84,7 +84,9 @@ export class Matches {
     pushNotificationSubscription.map((message: any) => {
       return message.body;
     }).subscribe((requestDto: string) => {
-      this.routeRequestPopup(JSON.parse(requestDto));
+      const requestDtoObj = JSON.parse(requestDto);
+      console.log(requestDtoObj);
+      if (!requestDtoObj.route.accepted) this.routeRequestPopup(requestDtoObj);
     });
 
     let errorSubscription = this._stompService.subscribe('/queue/errors');

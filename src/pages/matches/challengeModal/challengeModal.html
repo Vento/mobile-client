@@ -5,12 +5,17 @@
         Close
       </button>
     </ion-buttons>
-    <ion-title>Select a route</ion-title>
+    <ion-title *ngIf="!isRequestAccepted || !request">Select a route</ion-title>
+    <ion-title *ngIf="request && !isRequestAccepted">Player request</ion-title>
+    <ion-title *ngIf="isRequestAccepted || (request && request.accepted)">Running together!</ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content>
+<ion-content [ngClass]="{'grayscale' : isRequestSent}">
   <div #pleaseConnect id="please-connect">
     <p>Please connect to the Internet...</p>
+  </div>
+  <div *ngIf="isRequestSent" id="request-sent">
+    <p>Please wait for player to reply...</p>
   </div>
   <agm-map id="routeMap" [styles]="googleMapsProvider.mapStyle" [zoom]="16"
            [minZoom]="googleMapsProvider.options.minZoom"
@@ -23,13 +28,23 @@
       <agm-polyline-point *ngFor="let p of paths; let i = index" [latitude]="p.lat" [longitude]="p.lng"
       ></agm-polyline-point>
     </agm-polyline>
+    <agm-marker [latitude]="googleMapsProvider.options.center.lat"
+                [longitude]="googleMapsProvider.options.center.lng"
+                [iconUrl]="'assets/img/me.png'">
+    </agm-marker>
+    <agm-marker *ngFor="let m of markers; let i = index"
+                [latitude]="m.lat" [longitude]="m.lng" [label]="m.label" [iconUrl]="'assets/img/marker.png'">
+    </agm-marker>
   </agm-map>
-  <div *ngIf="user && user.label" class="route-info"><span>{{user.label}}</span> <span *ngIf="this.paths.length">Distance:{{this.calculateKmDistance(this.paths)}} km</span></div>
-  <div *ngIf="request" class="route-info"><span>{{request.username}}</span>  <span *ngIf="request.route">Distance:{{this.calculateKmDistance(this.paths)}} km</span></div>
+  <div *ngIf="user && user.label" class="route-info user"><span>{{user.label}}</span> <span *ngIf="this.paths.length">Distance:{{this.calculateKmDistance(this.paths)}} km</span></div>
+  <div *ngIf="request" class="route-info request"><span>{{request.route.name}}</span>  <span *ngIf="request.route">Distance:{{this.calculateKmDistance(this.paths)}} km</span></div>
 
 
   <ion-fab center bottom>
-    <button [disabled]="!this.paths.length" ion-fab color="orange" class="animated bounce" (click)="sendRequest()">
+    <button [hidden]="request" [disabled]="!this.paths.length || isRequestSent" ion-fab color="orange" class="animated bounce" (click)="sendRequest()">
+      <ion-icon class="fi flaticon-man-running"></ion-icon>
+    </button>
+    <button [hidden]="isRequestAccepted || !request" ion-fab color="orange" class="animated bounce" (click)="acceptRequest()">
       <ion-icon class="fi flaticon-man-running"></ion-icon>
     </button>
   </ion-fab>

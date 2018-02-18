@@ -25,16 +25,16 @@
             <h2 *ngIf="route.street">{{route.street.start}}</h2>
           </ion-item>
           <ion-item>
-            <ion-icon name="ios-flag-outline" item-left large></ion-icon>
+            <ion-icon *ngIf="route.street" name="ios-flag-outline" item-left large></ion-icon>
             <h2 *ngIf="route.street">{{route.street.end}}</h2>
           </ion-item>
           <ion-item>
             <span item-left *ngIf="route.avgtime">{{route.avgtime}}</span>
             <span item-left *ngIf="route.distance">({{route.distance}})</span>
-            <button primary clear item-right (click)="beginRoute(route)">
+            <!--<button primary clear item-right (click)="beginRoute(route)">
               <ion-icon name="navigate"></ion-icon>
               Start
-            </button>
+            </button>-->
           </ion-item>
         </ion-card-content>
       </ion-card>

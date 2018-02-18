@@ -36,7 +36,7 @@ export class MyApp {
     // used for an example of ngFor and navigation
     this.appPages = [
       {title: 'Activity', component: Dashboard, icon: 'fi flaticon-man-running'},
-      {title: 'History', component: History, icon: 'fi flaticon-history'},
+      //{title: 'History', component: History, icon: 'fi flaticon-history'},
       {title: 'Statistics', component: Statistics, icon: 'fi flaticon-cardiogram-and-heart'},
       {title: 'Routes', component: Routes, icon: 'fi flaticon-route-1'},
       {title: 'Matches', component: Matches, icon: 'fi flaticon-marathon'}
